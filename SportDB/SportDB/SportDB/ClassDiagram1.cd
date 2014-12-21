@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SportDB.Boete">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQEAAAAAAAAAgAAAAAABAAAAAAAQAAgAAAAAAA=</HashCode>
+      <FileName>Boete.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SportDB.Lid" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAgBAAAAggABAAAAIAAAAAAAAA=</HashCode>
+      <FileName>Lid.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SportDB.Program">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IgABAACAAAAAAAAgAABBAAAAEAAAAAgAAAAABgCBgAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SportDB.Pair&lt;T, X&gt;">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SportDB.Team">
+    <Position X="3.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAACAAAAAGAACAAAACAAAAAAABAAA=</HashCode>
+      <FileName>Team.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SportDB.Training">
+    <Position X="8.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAIAAAAAAAAAAAIAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Training.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SportDB.Wedstrijd">
+    <Position X="5.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAgAgAAAAAQAAAAAAAAAAAEAIwAAAAAAA=</HashCode>
+      <FileName>Wedstrijd.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SportDB.WedstrijdtSpeler" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>WedstrijdtSpeler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SportDB.WPFSportDbContext">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAACAAAAAAAAAAIAAAAQAAAECAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>WPFSportDbContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SportDB.Zaal">
+    <Position X="3.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAgAAAAAAAASAAAAAAA=</HashCode>
+      <FileName>Zaal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
