@@ -34,7 +34,7 @@ namespace DatabaseConsole_01
         private static List<String> teams;
         private static List<String> wedstrijden;
 
-        private static ClubDbContext context;
+        public static ClubDbContext context;
         static void Main(string[] args)
         {
             Dictionary<Leden, string> teamKey = new Dictionary<Leden, string>();
