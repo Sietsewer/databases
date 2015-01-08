@@ -150,6 +150,146 @@ namespace DatabaseConsole_01
 
         }
 
+        public static void editMember()
+        {
+            Console.Clear();
+            Console.SetCursorPosition(2, 2);
+            Console.WriteLine("Index: ");
+            int memberID = Convert.ToInt32(Console.ReadLine());
+            Leden lid = new Leden();
+            bool looping = true;
+            String[] options = { "Cancel", "Name", "Member number", "Gender (m/v)", "Adress", "Year of birth", "Member since", "Done" };
+            String[] contents = { "", "", "", "", "", "", "", "" };
+            Leden selected;
+            try
+            {
+                selected = Program.context.Leden.Where(b => b.snummer == memberID).ToArray()[0];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                ConsoleWriting.MainMenu();
+                return;
+            }
+            contents[1] = selected.naam+"";
+            contents[2] = memberID+"";
+            contents[3] = selected.s+"";
+            contents[4] = selected.adres+"";
+            contents[5] = selected.gebjaar+"";
+            contents[6] = selected.jaarlid + "";
+            Console.Clear();
+            String printMe = "- Main Menu -";
+            Console.SetCursorPosition(Console.WindowWidth / 2 - printMe.Length / 2, 2);
+            Console.Write(printMe);
+            int index = 0;
+            while (looping)
+            {
+                bool jump = false;
+                for (int i = 0; i < options.Length; i++)
+                {
+                    Console.SetCursorPosition(4, 4 + i);
+                    Console.Write(i == index ? " >" : "  ");
+                    Console.Write(options[i]);
+                    if (i != 0 && i != 7)
+                    {
+                        Console.Write(": " + contents[i]);
+                        for (int j = 0; j < Console.WindowWidth - Console.CursorLeft; j++)
+                        {
+                            Console.Write(" ");
+                        }
+                    }
+                }
+                if (index != 0 && index != 7)
+                {
+                    Console.CursorVisible = true;
+                    try
+                    {
+                        Console.SetCursorPosition(options[index].Length + contents[index].Length + 8, index + 4);
+                    }
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                        Console.SetCursorPosition(0, 0);
+                        Console.Write("Now you're just making stuff up.");
+                    }
+                }
+                else
+                {
+                    Console.CursorVisible = false;
+                }
+                ConsoleKeyInfo k = Console.ReadKey(true);
+                switch (k.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        index++;
+                        index = index > options.Length - 1 ? options.Length - 1 : index;
+                        break;
+                    case ConsoleKey.UpArrow:
+                        index--;
+                        index = index < 0 ? 0 : index;
+                        break;
+                    case ConsoleKey.Enter:
+                        jump = true;
+                        break;
+                    case ConsoleKey.Backspace:
+                        if (contents[index] != "")
+                        {
+                            contents[index] = contents[index].Remove(contents[index].Length - 1);
+                        }
+                        break;
+                    default:
+                        if (Char.IsLetterOrDigit(k.KeyChar))
+                        {
+                            contents[index] += k.KeyChar;
+                        }
+                        break;
+                }
+                if (jump)
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            looping = false;
+                            break;
+                        case 7:
+                            //String[] options = { "Cancel", "Name", "Member number", "Gender (m/v)", "Adress", "Year of birth", "Member since", "Done"};
+                            bool error = false;
+                            lid.naam = contents[1];
+                            lid.s = contents[3];
+                            lid.adres = contents[4];
+                            lid.snummer = memberID;
+                            try
+                            {
+                                lid.gebjaar = Convert.ToInt32(contents[5]);
+                            }
+                            catch (Exception e)
+                            {
+                                error = true;
+                            }
+                            try
+                            {
+                                lid.jaarlid = Convert.ToInt32(contents[6]);
+                            }
+                            catch (Exception e)
+                            {
+                                error = true;
+                            }
+                            looping = error;
+                            if (!error)
+                            {
+                                Program.context.Leden.Where(b => b.snummer == memberID).ToArray()[0] = lid;
+                                Program.context.SaveChanges();
+                            }
+                            break;
+                        default:
+                            index++;
+                            break;
+                    }
+                }
+
+            }
+            ConsoleWriting.MainMenu();
+
+        }
+
         public static void UpdateProgress(int addMe)
         {
             creationProgress += addMe;
@@ -167,9 +307,8 @@ namespace DatabaseConsole_01
                 Console.SetCursorPosition(Console.WindowWidth / 2 - printMe.Length / 2, 10);
                 Console.Write(printMe);
             }
-            
-            
         }
+
         public static void listMembers(List<Leden> members){
             String printMe = "";
             Console.Clear();
@@ -232,7 +371,7 @@ namespace DatabaseConsole_01
         public static void MainMenu()
         {
             bool looping = true;
-            String[] options = { "List members", "Add member", "NHL wedstrijden", "Ouwe gasten", "Exit", "Max boete C"};
+            String[] options = { "List members", "Add member", "NHL wedstrijden", "Ouwe gasten", "Exit", "Max boete C", "Edit member"};
             Console.Clear();
             String printMe = "- Main Menu -";
             Console.SetCursorPosition(Console.WindowWidth / 2 - printMe.Length / 2, 2);
@@ -306,6 +445,10 @@ namespace DatabaseConsole_01
                             List<Leden> l = new List<Leden>();
                             l.Add(Queries.maxBoetes());
                             ConsoleWriting.listMembersBoetes(l);
+                            looping = false;
+                            break;
+                        case 6:
+                            editMember();
                             looping = false;
                             break;
                         default:
