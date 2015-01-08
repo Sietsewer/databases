@@ -80,9 +80,9 @@ namespace DatabaseConsole_01
                 {
                     teamKey.Add(lid, getColumn("team")[i]);
                 }
-
-
                 context.Leden.Add(lid);
+
+
                 ConsoleWriting.UpdateProgress(1);
 
                 // Insert Penalties
@@ -90,7 +90,7 @@ namespace DatabaseConsole_01
                 boete.bedrag_boete = Convert.ToInt32(getColumn("bedrag_boete")[i] == "" ? "0" : getColumn("bedrag_boete")[i]);
                 boete.speler = (lid);
                 boete.toelichting = getColumn("toelichting")[i];
-
+                //boete.teamcode = 
                 context.Boetes.Add(boete);
                 ConsoleWriting.UpdateProgress(1);
             }
@@ -146,6 +146,14 @@ namespace DatabaseConsole_01
                 }
 
                 // Insert Game
+                try
+                {
+                    wedstrijd.wedstrijdnummer = Convert.ToInt32(getColumn("wedstrijdnummer")[i]);
+                }
+                catch (FormatException e)
+                {
+                    wedstrijd.scheids = null;
+                }
                 try
                 {
                     wedstrijd.scheids = context.Leden.Local.Single(b => b.snummer == Convert.ToInt32(getColumn("scheids")[i]));

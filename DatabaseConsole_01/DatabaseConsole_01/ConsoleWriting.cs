@@ -195,6 +195,32 @@ namespace DatabaseConsole_01
             ConsoleWriting.MainMenu();
         }
 
+        public static void listMembersBoetes(List<Leden> members)
+        {
+            String printMe = "";
+            Console.Clear();
+            Console.SetCursorPosition(2, 0);
+            printMe = (String.Format(" {0,-15}   {1,4}   {2,1}   {3,20}   {4,4}   {5,4} ", "Naam", "Num", "S", "Boete", "Geb", "Lid"));
+            Console.SetCursorPosition(Console.WindowWidth / 2 - printMe.Length / 2, Console.CursorTop);
+            Console.Write(printMe);
+            Console.CursorTop += 2;
+            foreach (Leden member in members)
+            {
+                printMe = (String.Format(" {0,-15} | {1,4} | {2,1} | {3,20} | {4,4} | {5,4} ", member.naam, member.snummer, member.s, Program.context.Boetes.Single(b => b.speler.ledenID == member.ledenID).bedrag_boete, member.gebjaar, member.jaarlid));
+                Console.SetCursorPosition(Console.WindowWidth / 2 - printMe.Length / 2, Console.CursorTop);
+                Console.Write(printMe);
+                Console.CursorTop++;
+            }
+
+            printMe = " -- Press any key to continue -- ";
+            Console.SetCursorPosition(Console.WindowWidth / 2 - printMe.Length / 2, Console.WindowHeight - 2);
+            Console.Write(printMe);
+
+            Console.ReadKey(true);
+
+            ConsoleWriting.MainMenu();
+        }
+
         public static void GoodBye()
         {
             Console.Clear();
@@ -206,7 +232,7 @@ namespace DatabaseConsole_01
         public static void MainMenu()
         {
             bool looping = true;
-            String[] options = { "List members", "Add member", "Yet another one", "last one I swear", "Exit" };
+            String[] options = { "List members", "Add member", "NHL wedstrijden", "Ouwe gasten", "Exit", "Max boete C"};
             Console.Clear();
             String printMe = "- Main Menu -";
             Console.SetCursorPosition(Console.WindowWidth / 2 - printMe.Length / 2, 2);
@@ -260,9 +286,27 @@ namespace DatabaseConsole_01
                             addMember();
                             looping = false;
                             break;
+                        case 2:
+                            listMembers(Queries.scheidsrechtersBijZaal(Program.context.Zalen.ToArray()[2]));
+                            looping = false;
+                            break;
+                        case 3:
+                            Console.Clear();
+                            Console.SetCursorPosition(2, 2);
+                            Console.Write("Leeftijd: ");
+                            int i = Convert.ToInt32(Console.ReadLine());
+                            listMembers(Queries.ouderDanToenLid(i));
+                            looping = false;
+                            break;
                         case 4:
                             looping = false;
                             ConsoleWriting.GoodBye();
+                            break;
+                        case 5:
+                            List<Leden> l = new List<Leden>();
+                            l.Add(Queries.maxBoetes());
+                            ConsoleWriting.listMembersBoetes(l);
+                            looping = false;
                             break;
                         default:
                             break;

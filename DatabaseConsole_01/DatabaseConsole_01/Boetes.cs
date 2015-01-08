@@ -17,6 +17,6 @@ namespace DatabaseConsole_01
 
         public Leden speler { get; set; }
 
-        public Wedstrijden wedstrijd { get; set; }
+        public Wedstrijden teamcode { get; set; }
     }
 }
