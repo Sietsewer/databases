@@ -17,6 +17,25 @@ namespace DatabaseConsole_01
             UpdateProgress(0);
         }
 
+        public static void deleteMember()
+        {
+            Console.Clear();
+            Console.SetCursorPosition(2, 2);
+            int index;
+            try
+            {
+                index = Convert.ToInt32(Console.ReadLine());
+            }
+            catch (Exception e)
+            {
+                ConsoleWriting.MainMenu();
+                return;
+            }
+            Program.context.Leden.Remove(Program.context.Leden.Where(r => r.snummer == index).ToArray()[0]);
+            Program.context.SaveChanges();
+            ConsoleWriting.MainMenu();
+        }
+
         public static void addMember()
         {
             Leden lid = new Leden();
@@ -275,7 +294,12 @@ namespace DatabaseConsole_01
                             looping = error;
                             if (!error)
                             {
-                                Program.context.Leden.Where(b => b.snummer == memberID).ToArray()[0] = lid;
+                                Program.context.Leden.Where(b => b.snummer == memberID).ToArray()[0].adres = lid.adres;
+                                Program.context.Leden.Where(b => b.snummer == memberID).ToArray()[0].gebjaar = lid.gebjaar;
+                                Program.context.Leden.Where(b => b.snummer == memberID).ToArray()[0].jaarlid = lid.jaarlid;
+                                Program.context.Leden.Where(b => b.snummer == memberID).ToArray()[0].naam = lid.naam;
+                                Program.context.Leden.Where(b => b.snummer == memberID).ToArray()[0].s = lid.s;
+                                Program.context.Leden.Where(b => b.snummer == memberID).ToArray()[0].snummer = lid.snummer;
                                 Program.context.SaveChanges();
                             }
                             break;
@@ -371,7 +395,7 @@ namespace DatabaseConsole_01
         public static void MainMenu()
         {
             bool looping = true;
-            String[] options = { "List members", "Add member", "NHL wedstrijden", "Ouwe gasten", "Exit", "Max boete C", "Edit member"};
+            String[] options = { "List members", "Add member", "NHL wedstrijden", "Ouwe gasten", "Exit", "Max boete C", "Edit member", "Remove member"};
             Console.Clear();
             String printMe = "- Main Menu -";
             Console.SetCursorPosition(Console.WindowWidth / 2 - printMe.Length / 2, 2);
@@ -449,6 +473,10 @@ namespace DatabaseConsole_01
                             break;
                         case 6:
                             editMember();
+                            looping = false;
+                            break;
+                        case 7:
+                            deleteMember();
                             looping = false;
                             break;
                         default:

@@ -37,188 +37,203 @@ namespace DatabaseConsole_01
         public static ClubDbContext context;
         static void Main(string[] args)
         {
-            Dictionary<Leden, string> teamKey = new Dictionary<Leden, string>();
-            ConsoleWriting.WriteCreatingDB();
 
             context = new ClubDbContext();
-            context.Database.Delete();
-
-            leden = new List<string>();
-            boetes = new List<string>();
-            teams = new List<string>();
-            wedstrijden = new List<string>();
-
-            // Split text (file) to 2d String array.
-            foreach (String dir in dirOne)
-            {
-                if (File.Exists(dir))
+            Console.SetCursorPosition(2, 2);
+            Console.Write("Clear database? (Y/N): ");
+            bool loop = true;
+            while(loop){
+                char c = Console.ReadKey().KeyChar;
+                if (c == 'Y' || c == 'y')
                 {
-                    gridOne = fileToGrid(File.ReadAllText(dir));
-                }
-            }
-            foreach (String dir in dirTwo)
-            {
-                if (File.Exists(dir))
-                {
-                    gridTwo = fileToGrid(File.ReadAllText(dir));
-                }
-            }
-            //gridOne = fileToGrid(File.ReadAllText(dirOne));
-            //gridTwo = fileToGrid(File.ReadAllText(dirTwo));
+                    loop = false;
+                    context.Database.Delete();
 
-            for (int i = 0; i < gridOne.GetLength(1) - 1; i++)
-            {
-                // Insert Memebers
-                Leden lid = new Leden();
-                lid.adres = getColumn("adres")[i];
-                lid.gebjaar = Convert.ToInt32(getColumn("gebjaar")[i]);
-                lid.naam = getColumn("naam")[i];
-                lid.jaarlid = Convert.ToInt32(getColumn("jaarlid")[i]);
-                lid.s = getColumn("s")[i];
-                lid.snummer = Convert.ToInt32(getColumn("snummer")[i]);
-                if (!teamKey.ContainsKey(lid) && getColumn("team")[i] != "")
-                {
-                    teamKey.Add(lid, getColumn("team")[i]);
-                }
-                context.Leden.Add(lid);
+                    Dictionary<Leden, string> teamKey = new Dictionary<Leden, string>();
+                    ConsoleWriting.WriteCreatingDB();
+
+                    leden = new List<string>();
+                    boetes = new List<string>();
+                    teams = new List<string>();
+                    wedstrijden = new List<string>();
+
+                    // Split text (file) to 2d String array.
+                    foreach (String dir in dirOne)
+                    {
+                        if (File.Exists(dir))
+                        {
+                            gridOne = fileToGrid(File.ReadAllText(dir));
+                        }
+                    }
+                    foreach (String dir in dirTwo)
+                    {
+                        if (File.Exists(dir))
+                        {
+                            gridTwo = fileToGrid(File.ReadAllText(dir));
+                        }
+                    }
+                    //gridOne = fileToGrid(File.ReadAllText(dirOne));
+                    //gridTwo = fileToGrid(File.ReadAllText(dirTwo));
+
+                    for (int i = 0; i < gridOne.GetLength(1) - 1; i++)
+                    {
+                        // Insert Memebers
+                        Leden lid = new Leden();
+                        lid.adres = getColumn("adres")[i];
+                        lid.gebjaar = Convert.ToInt32(getColumn("gebjaar")[i]);
+                        lid.naam = getColumn("naam")[i];
+                        lid.jaarlid = Convert.ToInt32(getColumn("jaarlid")[i]);
+                        lid.s = getColumn("s")[i];
+                        lid.snummer = Convert.ToInt32(getColumn("snummer")[i]);
+                        if (!teamKey.ContainsKey(lid) && getColumn("team")[i] != "")
+                        {
+                            teamKey.Add(lid, getColumn("team")[i]);
+                        }
+                        context.Leden.Add(lid);
 
 
-                ConsoleWriting.UpdateProgress(1);
+                        ConsoleWriting.UpdateProgress(1);
 
-                // Insert Penalties
-                Boetes boete = new Boetes();
-                boete.bedrag_boete = Convert.ToInt32(getColumn("bedrag_boete")[i] == "" ? "0" : getColumn("bedrag_boete")[i]);
-                boete.speler = (lid);
-                boete.toelichting = getColumn("toelichting")[i];
-                //boete.teamcode = 
-                context.Boetes.Add(boete);
-                ConsoleWriting.UpdateProgress(1);
-            }
-            context.SaveChanges();
-
-            for (int i = 0; i < gridTwo.GetLength(1) - 1; i++)
-            {
-                Zalen zaal = new Zalen();
-
-                // Insert Gyms
-
-                zaal.zaaladres = getColumn("zaaladres")[i];
-                zaal.trainzaal = getColumn("trainzaal")[i];
-                zaal.zaaltel = getColumn("zaaltel")[i];
-
-                if (!context.Zalen.Local.Any(b => b.trainzaal == zaal.trainzaal) && (zaal.trainzaal != ""))
-                {
-                    context.Zalen.Add(zaal);
-                    ConsoleWriting.UpdateProgress(1);
-                }
-                try
-                {
+                        // Insert Penalties
+                        Boetes boete = new Boetes();
+                        boete.bedrag_boete = Convert.ToInt32(getColumn("bedrag_boete")[i] == "" ? "0" : getColumn("bedrag_boete")[i]);
+                        boete.speler = (lid);
+                        boete.toelichting = getColumn("toelichting")[i];
+                        //boete.teamcode = 
+                        context.Boetes.Add(boete);
+                        ConsoleWriting.UpdateProgress(1);
+                    }
                     context.SaveChanges();
-                    ConsoleWriting.UpdateProgress(1);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
 
-            for (int i = 0; i < gridTwo.GetLength(1) - 1; i++)
-            {
-                Training training = new Training();
-                Teams team = new Teams();
-                Wedstrijden wedstrijd = new Wedstrijden();
+                    for (int i = 0; i < gridTwo.GetLength(1) - 1; i++)
+                    {
+                        Zalen zaal = new Zalen();
 
-                // Insert Teams
+                        // Insert Gyms
 
-                team.teamcode = getColumn("teamcode")[i];
-                team.trainer = context.Leden.Local.Single(b => b.snummer == Convert.ToInt32(getColumn("trainer")[i]));
-                team.leeftijdsklasse = getColumn("leeftijdsklasse")[i];
-                team.sexe = getColumn("sexe")[i];
-                foreach (Leden l in from b in teamKey where b.Value == team.teamcode select b.Key)
-                {
-                    team.spelers.Add(l);
-                }
+                        zaal.zaaladres = getColumn("zaaladres")[i];
+                        zaal.trainzaal = getColumn("trainzaal")[i];
+                        zaal.zaaltel = getColumn("zaaltel")[i];
 
-                if (!context.Teams.Local.Any(b => b == team))
-                {
-                    context.Teams.Add(team);
-                    ConsoleWriting.UpdateProgress(1);
-                }
+                        if (!context.Zalen.Local.Any(b => b.trainzaal == zaal.trainzaal) && (zaal.trainzaal != ""))
+                        {
+                            context.Zalen.Add(zaal);
+                            ConsoleWriting.UpdateProgress(1);
+                        }
+                        try
+                        {
+                            context.SaveChanges();
+                            ConsoleWriting.UpdateProgress(1);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
+                    }
 
-                // Insert Game
-                try
-                {
-                    wedstrijd.wedstrijdnummer = Convert.ToInt32(getColumn("wedstrijdnummer")[i]);
-                }
-                catch (FormatException e)
-                {
-                    wedstrijd.scheids = null;
-                }
-                try
-                {
-                    wedstrijd.scheids = context.Leden.Local.Single(b => b.snummer == Convert.ToInt32(getColumn("scheids")[i]));
-                }
-                catch (FormatException e)
-                {
-                    wedstrijd.scheids = null;
-                }
-                wedstrijd.wedstrijddatum = getColumn("wedstrijddatum")[i];
-                wedstrijd.tegenstander = getColumn("tegenstander")[i];
-                try
-                {
-                    wedstrijd.wedstrijdzaal = context.Zalen.Local.Single(b => b.trainzaal == getColumn("wedstrijdzaal")[i]);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-                wedstrijd.teamcode = team;
-                context.Wedstrijden.Add(wedstrijd);
+                    for (int i = 0; i < gridTwo.GetLength(1) - 1; i++)
+                    {
+                        Training training = new Training();
+                        Teams team = new Teams();
+                        Wedstrijden wedstrijd = new Wedstrijden();
 
-                // Insert Trains
+                        // Insert Teams
 
-                if (!team.trainingen.Any(b => b.traindag == Convert.ToInt32(getColumn("traindag")[i])))
-                {
+                        team.teamcode = getColumn("teamcode")[i];
+                        team.trainer = context.Leden.Local.Single(b => b.snummer == Convert.ToInt32(getColumn("trainer")[i]));
+                        team.leeftijdsklasse = getColumn("leeftijdsklasse")[i];
+                        team.sexe = getColumn("sexe")[i];
+                        foreach (Leden l in from b in teamKey where b.Value == team.teamcode select b.Key)
+                        {
+                            team.spelers.Add(l);
+                        }
+
+                        if (!context.Teams.Local.Any(b => b == team))
+                        {
+                            context.Teams.Add(team);
+                            ConsoleWriting.UpdateProgress(1);
+                        }
+
+                        // Insert Game
+                        try
+                        {
+                            wedstrijd.wedstrijdnummer = Convert.ToInt32(getColumn("wedstrijdnummer")[i]);
+                        }
+                        catch (FormatException e)
+                        {
+                            wedstrijd.scheids = null;
+                        }
+                        try
+                        {
+                            wedstrijd.scheids = context.Leden.Local.Single(b => b.snummer == Convert.ToInt32(getColumn("scheids")[i]));
+                        }
+                        catch (FormatException e)
+                        {
+                            wedstrijd.scheids = null;
+                        }
+                        wedstrijd.wedstrijddatum = getColumn("wedstrijddatum")[i];
+                        wedstrijd.tegenstander = getColumn("tegenstander")[i];
+                        try
+                        {
+                            wedstrijd.wedstrijdzaal = context.Zalen.Local.Single(b => b.trainzaal == getColumn("wedstrijdzaal")[i]);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+                        wedstrijd.teamcode = team;
+                        context.Wedstrijden.Add(wedstrijd);
+
+                        // Insert Trains
+
+                        if (!team.trainingen.Any(b => b.traindag == Convert.ToInt32(getColumn("traindag")[i])))
+                        {
+                            try
+                            {
+                                training.traindag = Convert.ToInt32(getColumn("traindag")[i]);
+                            }
+                            catch (FormatException e)
+                            {
+                                training.traindag = 0;
+                            }
+                            try
+                            {
+                                training.trainlengte = Convert.ToInt32(getColumn("trainlengte")[i]);
+                            }
+                            catch (FormatException e)
+                            {
+                                training.trainlengte = 0;
+                            }
+                            try
+                            {
+                                training.trainzaal = context.Zalen.Local.Single(b => b.trainzaal == getColumn("trainzaal")[i]);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+                            team.trainingen.Add(training);
+                        }
+                    }
                     try
                     {
-                        training.traindag = Convert.ToInt32(getColumn("traindag")[i]);
-                    }
-                    catch (FormatException e)
-                    {
-                        training.traindag = 0;
-                    }
-                    try
-                    {
-                        training.trainlengte = Convert.ToInt32(getColumn("trainlengte")[i]);
-                    }
-                    catch (FormatException e)
-                    {
-                        training.trainlengte = 0;
-                    }
-                    try
-                    {
-                        training.trainzaal = context.Zalen.Local.Single(b => b.trainzaal == getColumn("trainzaal")[i]);
+                        context.SaveChanges();
+                        ConsoleWriting.UpdateProgress(1);
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e.Message);
+                        Console.WriteLine(e);
                     }
-                    team.trainingen.Add(training);
+
+
+                }
+                else if (c == 'N' || c == 'n')
+                {
+                    loop = false;
                 }
             }
-            try
-            {
-                context.SaveChanges();
-                ConsoleWriting.UpdateProgress(1);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            finally
-            {
-                ConsoleWriting.listMembers(context.Leden.ToList<Leden>());
-            }
+
+            ConsoleWriting.listMembers(context.Leden.ToList<Leden>());
         }
 
         private static List<String> getColumn(String name)
