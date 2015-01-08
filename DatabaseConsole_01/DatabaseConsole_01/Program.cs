@@ -18,12 +18,12 @@ namespace DatabaseConsole_01
         private static String[] dirOne = {
 @"S:\Git\databases\ledenEnBoetes.txt",
 @"S:\Files\databases\databases\databases\ledenEnBoetes.txt", 
-@"YourDirHere"
+@"C:\Users\Sietse\Documents\GitHub\databases\ledenEnBoetes.txt"
                                          };
         private static String[] dirTwo = {
 @"S:\Git\databases\teamsEnWedstrijden.txt",
 @"S:\Files\databases\databases\databases\teamsEnWedstrijden.txt",
-@"YourDirHere"
+@"C:\Users\Sietse\Documents\GitHub\databases\teamsEnWedstrijden.txt"
                                          };
 
         private static String[,] gridOne;// [ column , row ]
@@ -99,9 +99,6 @@ namespace DatabaseConsole_01
             for (int i = 0; i < gridTwo.GetLength(1) - 1; i++)
             {
                 Zalen zaal = new Zalen();
-                Training training = new Training();
-                Teams team = new Teams();
-                Wedstrijden wedstrijd = new Wedstrijden();
 
                 // Insert Gyms
 
@@ -109,11 +106,27 @@ namespace DatabaseConsole_01
                 zaal.trainzaal = getColumn("trainzaal")[i];
                 zaal.zaaltel = getColumn("zaaltel")[i];
 
-                if (!context.Zalen.Local.Any(b => b.trainzaal == zaal.trainzaal))
+                if (!context.Zalen.Local.Any(b => b.trainzaal == zaal.trainzaal) && (zaal.trainzaal != ""))
                 {
                     context.Zalen.Add(zaal);
                     ConsoleWriting.UpdateProgress(1);
                 }
+                try
+                {
+                    context.SaveChanges();
+                    ConsoleWriting.UpdateProgress(1);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+
+            for (int i = 0; i < gridTwo.GetLength(1) - 1; i++)
+            {
+                Training training = new Training();
+                Teams team = new Teams();
+                Wedstrijden wedstrijd = new Wedstrijden();
 
                 // Insert Teams
 
@@ -143,8 +156,16 @@ namespace DatabaseConsole_01
                 }
                 wedstrijd.wedstrijddatum = getColumn("wedstrijddatum")[i];
                 wedstrijd.tegenstander = getColumn("tegenstander")[i];
-                wedstrijd.wedstrijdzaal = context.Zalen.Local.Single(b => b.trainzaal == getColumn("wedstrijdzaal")[i]);
+                try
+                {
+                    wedstrijd.wedstrijdzaal = context.Zalen.Local.Single(b => b.trainzaal == getColumn("wedstrijdzaal")[i]);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
                 wedstrijd.teamcode = team;
+                context.Wedstrijden.Add(wedstrijd);
 
                 // Insert Trains
 
@@ -166,7 +187,14 @@ namespace DatabaseConsole_01
                     {
                         training.trainlengte = 0;
                     }
-                    training.trainzaal = context.Zalen.Local.Single(b => b.trainzaal == getColumn("trainzaal")[i]);
+                    try
+                    {
+                        training.trainzaal = context.Zalen.Local.Single(b => b.trainzaal == getColumn("trainzaal")[i]);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                     team.trainingen.Add(training);
                 }
             }
@@ -190,22 +218,22 @@ namespace DatabaseConsole_01
             List<String> l = new List<string>();
             for (int i = 0; i < gridOne.GetLength(0); i++)
             {
-                if (gridOne[i, 0].Trim('"') == name.Trim('"'))
+                if (gridOne[i, 0].Trim('"','\r') == name.Trim('"','\r'))
                 {
                     for (int j = 1; j < gridOne.GetLength(1); j++)
                     {
-                        l.Add(gridOne[i, j].Trim('"'));
+                        l.Add(gridOne[i, j].Trim('"', '\r'));
 
                     }
                 }
             }
             for (int i = 0; i < gridTwo.GetLength(0); i++)
             {
-                if (gridTwo[i, 0].Trim('"') == name.Trim('"'))
+                if (gridTwo[i, 0].Trim('"', '\r') == name.Trim('"', '\r'))
                 {
                     for (int j = 1; j < gridTwo.GetLength(1); j++)
                     {
-                        l.Add(gridTwo[i, j].Trim('"'));
+                        l.Add(gridTwo[i, j].Trim('"', '\r'));
 
                     }
                 }
